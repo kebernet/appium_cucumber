@@ -1,0 +1,62 @@
+buildscript {
+    repositories {
+        maven {
+            url "http://repo.bodar.com"
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.samueltbrown:gradle-cucumber-plugin:0.9"
+    }
+}
+plugins {
+    id 'java'
+    id "com.github.samueltbrown.cucumber" version "0.9"
+    id 'idea'
+}
+
+tasks.cucumber.dependsOn(":app:assembleDebug")
+
+cucumber {
+    formats = ['pretty', 'json:build/cucumber.json', 'junit:build/cucumber.xml']
+//    tags = ['@billing', '@important']
+//    monochrome = false
+//    strict = false
+//    dryRun = false
+//    ignoreFailures = false
+
+    jvmOptions {
+        maxHeapSize = '512m'
+        environment 'apk', rootProject.project(":app").buildDir.getAbsolutePath() +
+                "/outputs/apk/debug/app-debug.apk"
+    }
+}
+
+repositories {
+    jcenter()
+    maven {
+        url 'https://repository-saucelabs.forge.cloudbees.com/release'
+    }
+}
+
+
+dependencies {
+    cucumberRuntime 'info.cukes:cucumber-java:1.2.5'
+    cucumberCompile 'info.cukes:cucumber-java:1.2.5'
+    cucumberCompile 'junit:junit:4.12'
+    cucumberCompile 'io.appium:java-client:3.3.0'
+}
+
+
+idea {
+    module {
+        testSourceDirs += file('src/cucumber/java')
+        scopes.TEST.plus.add(configurations.cucumberCompile)
+    }
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
