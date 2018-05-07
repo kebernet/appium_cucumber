@@ -12,10 +12,13 @@ activemq-data
 .project
 .settings
 ._.DS_Store
+._*
 .classpath
 nbactions.xml
 /out
 /?
+
+DerivedData
 
 build
 target

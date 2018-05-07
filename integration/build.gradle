@@ -11,6 +11,7 @@ buildscript {
         classpath "com.github.samueltbrown:gradle-cucumber-plugin:0.9"
     }
 }
+
 plugins {
     id 'java'
     id "com.github.samueltbrown.cucumber" version "0.9"
@@ -21,16 +22,19 @@ tasks.cucumber.dependsOn(":app:assembleDebug")
 
 cucumber {
     formats = ['pretty', 'json:build/cucumber.json', 'junit:build/cucumber.xml']
-//    tags = ['@billing', '@important']
-//    monochrome = false
-//    strict = false
-//    dryRun = false
-//    ignoreFailures = false
-
     jvmOptions {
         maxHeapSize = '512m'
+
         environment 'apk', rootProject.project(":app").buildDir.getAbsolutePath() +
                 "/outputs/apk/debug/app-debug.apk"
+
+        environment 'platform', System.getProperty("platform") == null ?
+                "android" :
+                System.getProperty("platform")
+
+        environment 'app', rootProject.projectDir.getAbsolutePath() +
+                "/ios/DerivedData/appium-cucumber/Build/Products/" +
+                "Debug-iphonesimulator/appium-cucumber.app"
     }
 }
 
@@ -45,6 +49,8 @@ repositories {
 dependencies {
     cucumberRuntime 'info.cukes:cucumber-java:1.2.5'
     cucumberCompile 'info.cukes:cucumber-java:1.2.5'
+    cucumberCompile 'info.cukes:cucumber-guice:1.2.5'
+    cucumberCompile 'com.google.inject:guice:4.2.0'
     cucumberCompile 'junit:junit:4.12'
     cucumberCompile 'io.appium:java-client:3.3.0'
 }
@@ -57,6 +63,6 @@ idea {
     }
 }
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 
