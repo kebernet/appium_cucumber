@@ -35,8 +35,9 @@ public class BaseSteps {
     @Then("the \"(.*)\" is gone")
     public void assertMissing(String text) throws Exception {
         doStep(()->{
-            assertTrue("The thing failed", false);
             strategy.assertMissing(text);
+            assertTrue("The thing failed", false);
+
         });
     }
 
