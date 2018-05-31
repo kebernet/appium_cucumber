@@ -1,12 +1,19 @@
 package cucumber.steps.impl;
 
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.stream.Stream;
 
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.ios.IOSDriver;
@@ -56,5 +63,28 @@ public class IOSBaseSteps extends BaseStepsStrategy<IOSDriver<MobileElement>> {
         }
         assertNull(element);
 
+    }
+
+    @Override
+    public List<LogEntry> getLogEntries() {
+        List<LogEntry> allEntries = new ArrayList<>();
+        getDriver().manage().logs().getAvailableLogTypes()
+                .stream()
+                .filter(Objects::nonNull)
+                .flatMap(s -> {
+                    try {
+                        return getDriver().manage().logs().get(s).filter(Level.ALL).stream();
+                    } catch (Exception e) {
+                        return Stream.empty();
+                    }
+                })
+                .filter(Objects::nonNull)
+                .forEach(allEntries::add);
+        allEntries.sort((o1, o2) -> Long.compare(o2.getTimestamp(), o1.getTimestamp()));
+        return allEntries;
+    }
+
+    public File getScreenshotAsFile() {
+        return getDriver().getScreenshotAs(OutputType.FILE);
     }
 }

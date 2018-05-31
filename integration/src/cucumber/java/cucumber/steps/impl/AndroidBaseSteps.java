@@ -1,12 +1,16 @@
 package cucumber.steps.impl;
 
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.logging.Level;
 
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
@@ -51,4 +55,15 @@ public class AndroidBaseSteps extends BaseStepsStrategy<AndroidDriver> {
         }
         assertTrue(element == null);
     }
+
+    @Override
+    public List<LogEntry> getLogEntries() {
+        return getDriver().manage().logs().get("logcat").filter(Level.ALL);
+    }
+
+    @Override
+    public File getScreenshotAsFile() {
+        return getDriver().getScreenshotAs(OutputType.FILE);
+    }
+
 }

@@ -1,9 +1,13 @@
 package cucumber.steps.impl;
 
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.logging.LogEntry;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.List;
 
 
 public abstract class BaseStepsStrategy<T extends WebDriver> {
@@ -25,4 +29,8 @@ public abstract class BaseStepsStrategy<T extends WebDriver> {
     public abstract void clickByText(String text);
 
     public abstract void assertMissing(String text);
+
+    public abstract List<LogEntry> getLogEntries();
+
+    public abstract File getScreenshotAsFile();
 }

@@ -8,7 +8,10 @@ import javax.inject.Singleton;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import cucumber.hooks.Recorder;
 import cucumber.steps.impl.BaseStepsStrategy;
+
+import static org.junit.Assert.assertTrue;
 
 @Singleton
 public class BaseSteps {
@@ -20,17 +23,45 @@ public class BaseSteps {
     }
 
     @Given("I have launched the application")
-    public  void startApp() throws IOException{
-        strategy.startApp();
+    public  void startApp() throws Exception {
+        doStep(()->strategy.startApp());
     }
 
     @When("I click the \"(.*)\" button")
-    public void clickByText(String text){
-        strategy.clickByText(text);
+    public void clickByText(String text) throws Exception {
+        doStep(()->strategy.clickByText(text));
     }
 
     @Then("the \"(.*)\" is gone")
-    public void assertMissing(String text){
-        strategy.assertMissing(text);
+    public void assertMissing(String text) throws Exception {
+        doStep(()->{
+            assertTrue("The thing failed", false);
+            strategy.assertMissing(text);
+        });
+    }
+
+
+    private void beforeStep() {
+        Recorder.record(strategy.getScreenshotAsFile());
+    }
+
+    @SuppressWarnings("unchecked")
+    private void afterStep() {
+        Recorder.log(strategy.getLogEntries());
+        Recorder.record(strategy.getScreenshotAsFile());
+    }
+
+
+    private void doStep(ThrowRunnable runnable) throws Exception {
+        beforeStep();
+        try {
+            runnable.run();
+        } finally {
+            afterStep();
+        }
+    }
+
+    private interface ThrowRunnable {
+        void run() throws Exception;
     }
 }
