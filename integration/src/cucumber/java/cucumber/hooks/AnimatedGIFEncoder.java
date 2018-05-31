@@ -80,10 +80,7 @@ public class AnimatedGIFEncoder implements Closeable {
         writer.writeToSequence(new IIOImage(img, null, meta), writeParam);
     }
 
-    /**
-     * Close this GifSequenceWriter object. This does not close the underlying
-     * stream, just finishes off the GIF.
-     */
+    @Override
     public void close() throws IOException {
         writer.endWriteSequence();
     }
